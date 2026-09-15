@@ -574,5 +574,6 @@ def about():
 # ----------------------------------------------------------------------------
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
-    print(f"Starting Flask server on http://127.0.0.1:{port} ...")
-    app.run(host="127.0.0.1", port=port, debug=True)
+    debug = os.environ.get("FLASK_DEBUG", "false").lower() == "true"
+    print(f"Starting Flask server on http://0.0.0.0:{port} ...")
+    app.run(host="0.0.0.0", port=port, debug=debug)
