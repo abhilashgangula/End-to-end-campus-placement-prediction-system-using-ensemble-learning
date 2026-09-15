@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Campus Placement Prediction System Using Ensemble Learning</title>
+  <meta name="description"
+    content="End-to-End Campus Placement Prediction System Using Ensemble Learning: Evaluate placement probability and forecast salary packages in LPA using Bagging, Boosting, and Voting Ensembles.">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar" id="mainNav">
+    <div class="nav-container">
+      <a href="{{ url_for('index') }}" class="nav-brand">
+        <div class="brand-icon">🎓</div>
+        <span class="brand-text">PlacementEnsemble AI</span>
+      </a>
+      <ul class="nav-links" id="navMenuIndex">
+        <li class="nav-item active"><a href="{{ url_for('index') }}" id="navHome">Home</a></li>
+        <li class="nav-item"><a href="{{ url_for('predict') }}" id="navPredict">Predict Placement</a></li>
+        <li class="nav-item"><a href="{{ url_for('about') }}" id="navAbout">Ensemble Insights</a></li>
+        <li class="nav-item"><a href="{{ url_for('predict') }}" class="nav-btn" id="navGetStarted">⚡ Launch
+            Assessment</a></li>
+      </ul>
+      <button class="nav-toggle" id="navToggleIndex" aria-label="Toggle navigation" aria-expanded="false"
+        aria-controls="navMenuIndex">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Main Content Wrapper -->
+  <main class="main-wrapper">
+
+    <!-- Hero Section -->
+    <section class="hero-section" id="heroSection">
+      <div class="badge-tag">
+        <span class="dot"></span> College Mini-Project • Advanced Ensemble Learning
+      </div>
+      <h1 class="hero-title">
+        Campus Placement &amp; Salary Package Prediction <br>
+        <span class="gradient-text">Intelligent Career Analytics AI</span>
+      </h1>
+      <p class="hero-subtitle">
+        An end-to-end predictive analytics platform trained on <strong>100,000 student records</strong>.
+        Evaluates placement likelihood with calibrated confidence, forecasts starting salary compensation in LPA,
+        and provides personalized career growth recommendations.
+      </p>
+      <div class="hero-actions">
+        <a href="{{ url_for('predict') }}" class="btn btn-primary" id="heroCtaPredict">
+          ⚡ Predict Placement &amp; Salary
+        </a>
+        <a href="{{ url_for('about') }}" class="btn btn-secondary" id="heroCtaAbout">
+          📖 System Documentation &amp; Insights
+        </a>
+      </div>
+    </section>
+
+    <!-- Key Metrics Grid -->
+    <section class="stats-grid" id="statsGrid">
+      <div class="stat-card" id="statSamples">
+        <span class="stat-value">100,000</span>
+        <span class="stat-label">Student Records Evaluated</span>
+      </div>
+      <div class="stat-card" id="statAccuracy">
+        <span class="stat-value">79.86%</span>
+        <span class="stat-label">Classification Accuracy</span>
+      </div>
+      <div class="stat-card" id="statF1">
+        <span class="stat-value">81.02%</span>
+        <span class="stat-label">Placement F1-Score</span>
+      </div>
+      <div class="stat-card" id="statRecall">
+        <span class="stat-value">93.95%</span>
+        <span class="stat-label">Placement Detection Recall</span>
+      </div>
+      <div class="stat-card" id="statSalaryR2">
+        <span class="stat-value">0.791 R²</span>
+        <span class="stat-label">Salary Model Fit (±0.945 LPA)</span>
+      </div>
+    </section>
+
+    <!-- System Highlights Section -->
+    <section class="features-section" id="ensembleOverviewSection">
+      <div class="section-header">
+        <h2 class="section-title">Core System Architecture</h2>
+        <p class="section-desc">
+          Engineered for reliability, statistical rigor, and real-time inference:
+        </p>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon-wrapper">🎯</div>
+          <h3>1. Calibrated Placement Likelihood</h3>
+          <p>
+            Generates reliable continuous probability scores, ensuring predictions reflect genuine placement odds rather
+            than arbitrary thresholds.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-wrapper">💰</div>
+          <h3>2. Salary Package Forecasting</h3>
+          <p>
+            Accurately projects expected annual CTC ranges in LPA for qualified candidates based on academic and
+            technical competencies.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-wrapper">🔍</div>
+          <h3>3. Explainable AI Factor Breakdown</h3>
+          <p>
+            Pinpoints candidate strengths (e.g. <em>Zero Backlogs</em>, <em>High Coding Score</em>) and flags areas
+            needing intervention.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-wrapper">🔒</div>
+          <h3>4. Production Scikit-Learn Pipeline</h3>
+          <p>
+            All feature scaling and categorical encoding operate strictly inside encapsulated pipelines fitted
+            exclusively on training data.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Key System Capabilities -->
+    <section class="features-section" id="capabilitiesSection" style="margin-top: 1.5rem;">
+      <div class="section-header">
+        <h2 class="section-title">Key System Capabilities</h2>
+        <p class="section-desc">
+          Comprehensive dual-target evaluation and explainable AI insights for college placement analytics:
+        </p>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon-wrapper">🎯</div>
+          <h3>Dual Target Forecasting</h3>
+          <p>
+            Simultaneously evaluates binary placement odds (`Placed` vs `Not Placed`) and forecasts continuous starting
+            salary compensation in LPA.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-wrapper">🔍</div>
+          <h3>Explainable AI Diagnostics</h3>
+          <p>
+            Instantly flags individual candidate assets (e.g. *Zero Backlogs*, *High DSA Score*) vs critical risk
+            penalties (e.g. *Active Arrears*).
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-wrapper">📈</div>
+          <h3>Peer Benchmark Tracking</h3>
+          <p>
+            Compares candidate GPA, coding score, aptitude, and mock interviews directly against historical placed
+            student averages.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-wrapper">💡</div>
+          <h3>Actionable Growth Roadmaps</h3>
+          <p>
+            Provides prioritized recommendations to help students systematically rectify arrears, expand GitHub
+            projects, and prepare for interviews.
+          </p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Global Footer -->
+  <footer class="footer" id="globalFooter">
+    <p>🎓 <strong>End-to-End Campus Placement Prediction System Using Ensemble Learning</strong></p>
+    <p>College Mini-Project Demonstration Platform • Developed with Python, Scikit-Learn &amp; Flask.</p>
+  </footer>
+
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+
+</html>

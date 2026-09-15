@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Assessment Portal | Campus Placement Prediction System</title>
+  <meta name="description" content="Predict campus placement probability and starting salary package in LPA with Ensemble Machine Learning.">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar" id="mainNav">
+    <div class="nav-container">
+      <a href="{{ url_for('index') }}" class="nav-brand">
+        <div class="brand-icon">🎓</div>
+        <span class="brand-text">PlacementEnsemble AI</span>
+      </a>
+      <ul class="nav-links" id="navMenuPredict">
+        <li class="nav-item"><a href="{{ url_for('index') }}" id="navHome">Home</a></li>
+        <li class="nav-item active"><a href="{{ url_for('predict') }}" id="navPredict">Predict Placement</a></li>
+        <li class="nav-item"><a href="{{ url_for('about') }}" id="navAbout">System Insights</a></li>
+        <li class="nav-item"><a href="{{ url_for('predict') }}" class="nav-btn" id="navGetStarted">⚡ Predict Placement</a></li>
+      </ul>
+      <button class="nav-toggle" id="navTogglePredict" aria-label="Toggle navigation" aria-expanded="false" aria-controls="navMenuPredict">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- SVG Gradients Definition -->
+  <svg style="position: absolute; width: 0; height: 0;" aria-hidden="true" focusable="false">
+    <defs>
+      <linearGradient id="placedGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#10b981" />
+        <stop offset="100%" stop-color="#06b6d4" />
+      </linearGradient>
+      <linearGradient id="notPlacedGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#f43f5e" />
+        <stop offset="100%" stop-color="#f59e0b" />
+      </linearGradient>
+    </defs>
+  </svg>
+
+  <main class="main-wrapper">
+    <div class="prediction-container">
+
+      <!-- ===================================================================
+           1. Student Information Assessment Form Panel
+           =================================================================== -->
+      <section class="form-panel" id="formPanel">
+        <div class="panel-header">
+          <h2 class="panel-title">
+            <span>📝</span> Student Profile Assessment Form
+          </h2>
+        </div>
+
+        <!-- Quick Presets Bar -->
+        <div class="presets-bar" id="presetsBar">
+          <span class="presets-label">⚡ 1-Click Presets:</span>
+          {% for name, profile in presets.items() %}
+            <button type="button" 
+                    class="preset-chip {% if name == 'Balanced Performer' and not result %}active{% endif %}" 
+                    data-preset='{{ profile | tojson }}'
+                    id="preset_{{ name | lower | replace(' ', '_') }}">
+              {{ name }}
+            </button>
+          {% endfor %}
+        </div>
+
+        {% if error_msg %}
+          <div class="rec-card rec-danger" style="margin-bottom: 1.25rem;">
+            <strong>Error:</strong> {{ error_msg }}
+          </div>
+        {% endif %}
+
+        <form id="predictionForm" method="POST" action="{{ url_for('predict') }}">
+
+          <!-- SECTION 1: Academic Information -->
+          <div class="form-section-title">🎓 1. Academic Information</div>
+          <div class="form-grid">
+            <div class="input-group">
+              <label for="branch">Engineering Branch <span style="color: var(--primary-light);">*</span></label>
+              <select id="branch" name="branch" class="form-control" required>
+                {% for b in cat_options.get('branch', ['CSE', 'IT', 'ECE', 'EE', 'ME', 'CE', 'Chemical']) %}
+                  <option value="{{ b }}" {% if input_data.get('branch') == b %}selected{% endif %}>{{ b }}</option>
+                {% endfor %}
+              </select>
+              <span class="tooltip-text">Student engineering discipline.</span>
+            </div>
+
+            <div class="input-group">
+              <label for="college_tier">College Tier <span style="color: var(--primary-light);">*</span></label>
+              <select id="college_tier" name="college_tier" class="form-control" required>
+                {% for t in cat_options.get('college_tier', ['Tier-1', 'Tier-2', 'Tier-3']) %}
+                  <option value="{{ t }}" {% if input_data.get('college_tier') == t %}selected{% endif %}>{{ t }}</option>
+                {% endfor %}
+              </select>
+              <span class="tooltip-text">Institutional accreditation tier.</span>
+            </div>
+
+            <div class="input-group">
+              <label for="cgpa">Cumulative CGPA (4.0 - 10.0) <span class="input-val-display" id="disp_cgpa">{{ input_data.get('cgpa', 7.50) }}</span></label>
+              <input type="range" id="cgpa" name="cgpa" min="4.0" max="10.0" step="0.05" required 
+                     value="{{ input_data.get('cgpa', 7.50) }}" data-sync="disp_cgpa">
+              <span class="tooltip-text">Overall academic CGPA scale 4.0 to 10.0.</span>
+            </div>
+
+            <div class="input-group">
+              <label for="backlogs">Active Backlogs <span class="input-val-display" id="disp_backlogs">{{ input_data.get('backlogs', 0) }}</span></label>
+              <input type="range" id="backlogs" name="backlogs" min="0" max="3" step="1" required 
+                     value="{{ input_data.get('backlogs', 0) }}" data-sync="disp_backlogs">
+              <span class="tooltip-text">Number of pending subject arrears (0 to 3).</span>
+            </div>
+          </div>
+
+          <!-- SECTION 2: Technical Skills -->
+          <div class="form-section-title">💻 2. Technical Competencies</div>
+          <div class="form-grid">
+            <div class="input-group">
+              <label for="coding_skills">Coding Skills (1 - 10) <span class="input-val-display" id="disp_coding">{{ input_data.get('coding_skills', 6.0) }}</span></label>
+              <input type="range" id="coding_skills" name="coding_skills" min="1.0" max="10.0" step="0.1" required 
+                     value="{{ input_data.get('coding_skills', 6.0) }}" data-sync="disp_coding">
+              <span class="tooltip-text">General coding proficiency and syntax mastery.</span>
+            </div>
+
+            <div class="input-group">
+              <label for="dsa_score">DSA Score (1 - 10) <span class="input-val-display" id="disp_dsa">{{ input_data.get('dsa_score', 5.5) }}</span></label>
+              <input type="range" id="dsa_score" name="dsa_score" min="1.0" max="10.0" step="0.1" required 
+                     value="{{ input_data.get('dsa_score', 5.5) }}" data-sync="disp_dsa">
+              <span class="tooltip-text">Data structures &amp; algorithmic problem-solving skill.</span>
+            </div>
+
+            <div class="input-group">
+              <label for="aptitude_score">Aptitude Score (20 - 100) <span class="input-val-display" id="disp_aptitude">{{ input_data.get('aptitude_score', 65.0) }}</span></label>
+              <input type="range" id="aptitude_score" name="aptitude_score" min="20" max="100" step="1" required 
+                     value="{{ input_data.get('aptitude_score', 65.0) }}" data-sync="disp_aptitude">
+              <span class="tooltip-text">Quantitative, logical, and verbal screening score.</span>
+            </div>
+
+            <div class="input-group">
+              <label for="ml_knowledge">Machine Learning Knowledge (0 - 10) <span class="input-val-display" id="disp_ml">{{ input_data.get('ml_knowledge', 4.5) }}</span></label>
+              <input type="range" id="ml_knowledge" name="ml_knowledge" min="0.0" max="10.0" step="0.1" required 
+                     value="{{ input_data.get('ml_knowledge', 4.5) }}" data-sync="disp_ml">
+              <span class="tooltip-text">Applied ML, deep learning, and data analytics understanding.</span>
+            </div>
+
+            <div class="input-group">
+              <label for="system_design">System Design (0 - 10) <span class="input-val-display" id="disp_sys">{{ input_data.get('system_design', 4.0) }}</span></label>
+              <input type="range" id="system_design" name="system_design" min="0.0" max="10.0" step="0.1" required 
+                     value="{{ input_data.get('system_design', 4.0) }}" data-sync="disp_sys">
+              <span class="tooltip-text">Architecture, scalable design, and OOP principles.</span>
+            </div>
+          </div>
+
+          <!-- SECTION 3: Communication & Soft Skills -->
+          <div class="form-section-title">👔 3. Communication &amp; Soft Skills</div>
+          <div class="form-grid">
+            <div class="input-group">
+              <label for="communication_skills">Communication Skills (1 - 10) <span class="input-val-display" id="disp_comm">{{ input_data.get('communication_skills', 6.0) }}</span></label>
+              <input type="range" id="communication_skills" name="communication_skills" min="1.0" max="10.0" step="0.1" required 
+                     value="{{ input_data.get('communication_skills', 6.0) }}" data-sync="disp_comm">
+              <span class="tooltip-text">Verbal clarity, articulation, and interview presence.</span>
+            </div>
+          </div>
+
+          <!-- SECTION 4: Experience & Portfolio -->
+          <div class="form-section-title">📁 4. Practical Experience &amp; Portfolio</div>
+          <div class="form-grid">
+            <div class="input-group">
+              <label for="internships">Internships Completed <span class="input-val-display" id="disp_internships">{{ input_data.get('internships', 1) }}</span></label>
+              <input type="range" id="internships" name="internships" min="0" max="3" step="1" required 
+                     value="{{ input_data.get('internships', 1) }}" data-sync="disp_internships">
+              <span class="tooltip-text">Industrial or corporate internship count.</span>
+            </div>
+
+            <div class="input-group">
+              <label for="projects_count">Major Projects Built <span class="input-val-display" id="disp_projects">{{ input_data.get('projects_count', 2) }}</span></label>
+              <input type="range" id="projects_count" name="projects_count" min="0" max="5" step="1" required 
+                     value="{{ input_data.get('projects_count', 2) }}" data-sync="disp_projects">
+              <span class="tooltip-text">Full-stack, ML, or capstone projects completed.</span>
+            </div>
+
+            <div class="input-group">
+              <label for="certifications">Technical Certifications <span class="input-val-display" id="disp_certs">{{ input_data.get('certifications', 1) }}</span></label>
+              <input type="range" id="certifications" name="certifications" min="0" max="4" step="1" required 
+                     value="{{ input_data.get('certifications', 1) }}" data-sync="disp_certs">
+              <span class="tooltip-text">Verified industry certifications (AWS, Google, etc.).</span>
+            </div>
+
+            <div class="input-group">
+              <label for="hackathons">Hackathons Participated <span class="input-val-display" id="disp_hackathons">{{ input_data.get('hackathons', 1) }}</span></label>
+              <input type="range" id="hackathons" name="hackathons" min="0" max="3" step="1" required 
+                     value="{{ input_data.get('hackathons', 1) }}" data-sync="disp_hackathons">
+              <span class="tooltip-text">Competitive programming or build hackathons attended.</span>
+            </div>
+
+            <div class="input-group">
+              <label for="open_source_contributions">Open Source Contributions <span class="input-val-display" id="disp_oss">{{ input_data.get('open_source_contributions', 0) }}</span></label>
+              <input type="range" id="open_source_contributions" name="open_source_contributions" min="0" max="2" step="1" required 
+                     value="{{ input_data.get('open_source_contributions', 0) }}" data-sync="disp_oss">
+              <span class="tooltip-text">Public GitHub open-source repositories contributed to.</span>
+            </div>
+
+            <div class="input-group">
+              <label for="extracurriculars">Extracurricular Activities <span class="input-val-display" id="disp_extra">{{ input_data.get('extracurriculars', 1) }}</span></label>
+              <input type="range" id="extracurriculars" name="extracurriculars" min="0" max="3" step="1" required 
+                     value="{{ input_data.get('extracurriculars', 1) }}" data-sync="disp_extra">
+              <span class="tooltip-text">Club memberships, event leadership, and sports.</span>
+            </div>
+          </div>
+
+          <div class="form-actions" style="margin-top: 1.5rem;">
+            <button type="submit" class="btn btn-primary" id="predictBtn" style="width: 100%;">
+              ⚡ Execute Assessment Prediction
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <!-- ===================================================================
+           2. Results Display Dashboard Panel
+           =================================================================== -->
+      <section class="result-panel" id="resultDashboard">
+
+        <!-- ── CARD HEADER ─────────────────────────────────────── -->
+        <div class="rc-header">
+          <span class="rc-header-label">Campus Placement Prediction</span>
+          <span class="rc-model-tag">Ensemble Intelligence</span>
+        </div>
+
+        <!-- ── STATUS BANNER ──────────────────────────────────── -->
+        <div class="rc-status-banner {% if result and result.is_placed %}rc-banner-placed{% elif result %}rc-banner-risk{% else %}rc-banner-default{% endif %}"
+             id="statusBanner">
+          <span class="rc-status-icon" id="statusIcon">
+            {% if result and result.is_placed %}✓{% elif result %}⚠{% else %}◎{% endif %}
+          </span>
+          <span class="rc-status-label" id="statusLabel">
+            {% if result and result.is_placed %}Placement Likely
+            {% elif result %}Placement At Risk
+            {% else %}Assessment Ready
+            {% endif %}
+          </span>
+        </div>
+
+        <!-- ── PROBABILITY ────────────────────────────────────── -->
+        <div class="rc-block rc-prob-block">
+          <div class="rc-prob-number" id="gaugePercentText">
+            {{ result.probability if result else '75.2' }}<span class="rc-prob-unit">%</span>
+          </div>
+          <div class="rc-prob-label">Placement Likelihood</div>
+
+          <div class="rc-prob-bar-track">
+            <div class="rc-prob-bar-fill {% if result and result.is_placed %}rc-bar-placed{% elif result %}rc-bar-risk{% else %}rc-bar-placed{% endif %}"
+                 id="probBarFill"
+                 style="width: {{ result.probability if result else 75.2 }}%"></div>
+          </div>
+
+          <div class="rc-conf-pill {% if result %}rc-conf-{{ result.risk_badge }}{% else %}rc-conf-warning{% endif %}"
+               id="statusPill">
+            {% if result %}{{ result.risk_level }}{% else %}Adjust inputs or choose a preset to evaluate{% endif %}
+          </div>
+
+          <!-- Compatibility: hidden SVG circle for initExistingGauge -->
+          <svg style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true">
+            <circle id="gaugeCircle"
+                    class="gauge-progress {% if result and result.is_placed %}gauge-placed{% elif result %}gauge-not-placed{% else %}gauge-placed{% endif %}"
+                    data-probability="{{ result.probability if result else 75.2 }}"
+                    cx="0" cy="0" r="80"></circle>
+          </svg>
+        </div>
+
+        <div class="rc-divider"></div>
+
+        <!-- ── PREDICTED SALARY ───────────────────────────────── -->
+        <div class="rc-block" id="salaryCard">
+          <div class="rc-block-label">Predicted Starting Package</div>
+          <div class="rc-salary-row">
+            <span class="rc-salary-amount" id="salaryValue">
+              ₹ {{ result.salary_lpa if result else '17.30' }} LPA
+            </span>
+          </div>
+          <div class="rc-salary-band" id="salaryRange">
+            Estimated Range &nbsp;₹ {{ result.salary_range if result else '15.20 – 19.90 LPA' }}
+          </div>
+        </div>
+
+        <div class="rc-divider"></div>
+
+        <!-- ── KEY PREDICTIVE FACTORS ─────────────────────────── -->
+        <div class="rc-block" id="factorsSection">
+          <div class="rc-block-label">Key Competency Benchmarks</div>
+
+          {% set bm_list = result.benchmarks if result else [
+            {'label': 'CGPA',          'user_value': 7.5, 'placed_avg': 7.2, 'user_pct': 75.0, 'placed_pct': 72.0},
+            {'label': 'Coding Skills', 'user_value': 6.5, 'placed_avg': 6.0, 'user_pct': 65.0, 'placed_pct': 60.0},
+            {'label': 'DSA Score',     'user_value': 6.0, 'placed_avg': 5.5, 'user_pct': 60.0, 'placed_pct': 55.0},
+            {'label': 'Aptitude Score','user_value': 68.0,'placed_avg': 65.0,'user_pct': 68.0, 'placed_pct': 65.0},
+            {'label': 'Communication', 'user_value': 6.5, 'placed_avg': 6.0, 'user_pct': 65.0, 'placed_pct': 60.0}
+          ] %}
+
+          <div class="rc-factors-list" id="factorsList">
+            {% for item in bm_list %}
+              {% set safe_id = item.label|replace(' ','')|replace('(','')
+                                         |replace(')','') |replace('%','')
+                                         |replace('.','') %}
+              <div class="rc-factor-row">
+                <div class="rc-factor-meta">
+                  <span class="rc-factor-name">{{ item.label }}</span>
+                  <span class="rc-factor-score" id="bench-val-{{ safe_id }}">{{ item.user_value }}</span>
+                </div>
+                <div class="rc-factor-track">
+                  <div class="rc-factor-bar" id="bench-bar-{{ safe_id }}"
+                       style="width: {{ item.user_pct }}%"></div>
+                  <div class="rc-factor-marker"
+                       style="left: {{ item.placed_pct }}%"
+                       title="Placed avg: {{ item.placed_avg }}"></div>
+                </div>
+                <div class="rc-factor-avgline">vs avg {{ item.placed_avg }}</div>
+              </div>
+            {% endfor %}
+          </div>
+
+          <p class="rc-xai-note">
+            Bar = your score &nbsp;│&nbsp;
+            <span class="rc-marker-legend">▎</span> = placed-student average
+          </p>
+        </div>
+
+        <div class="rc-divider"></div>
+
+        <!-- ── PLACEMENT SIGNALS ──────────────────────────────── -->
+        <div class="rc-block">
+          <div class="rc-block-label">Placement Signals</div>
+          <div class="rc-signals-list" id="signalsList">
+            {% set fact_list = result.factors if result else [
+              {'name': 'Zero Active Backlogs', 'impact': 'positive', 'badge': 'High Asset',
+               'desc': 'Clean academic record satisfies corporate eligibility criteria.'},
+              {'name': 'Strong DSA Foundations', 'impact': 'positive', 'badge': 'Core Strength',
+               'desc': 'Competitive rating for preliminary online assessment coding rounds.'}
+            ] %}
+            {% for f in fact_list %}
+              <div class="rc-signal {% if f.impact == 'positive' %}rc-signal-pos{% else %}rc-signal-neg{% endif %}">
+                <span class="rc-signal-dot">
+                  {% if f.impact == 'positive' %}▲{% else %}▼{% endif %}
+                </span>
+                <div class="rc-signal-body">
+                  <div class="rc-signal-name">
+                    {{ f.name }}<span class="rc-signal-badge">{{ f.badge }}</span>
+                  </div>
+                  <div class="rc-signal-desc">{{ f.desc }}</div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="rc-divider"></div>
+
+        <!-- ── CAREER ACTION PLAN ─────────────────────────────── -->
+        <div class="rc-block">
+          <div class="rc-block-label">Career Action Plan</div>
+          <div id="recommendationsList">
+            {% if result and result.recommendations %}
+              {% for rec in result.recommendations %}
+                <div class="rec-card rec-{{ rec.type }}">
+                  <div class="rec-title">{{ rec.title }}</div>
+                  <div class="rec-desc">{{ rec.description }}</div>
+                </div>
+              {% endfor %}
+            {% else %}
+              <div class="rec-card rec-info">
+                <div class="rec-title">Assessment Ready</div>
+                <div class="rec-desc">Adjust sliders or choose a preset to generate a customized placement assessment and career roadmap.</div>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Global Footer -->
+  <footer class="footer" id="globalFooter">
+    <p>🎓 <strong>End-to-End Campus Placement Prediction System Using Ensemble Learning</strong></p>
+    <p>College Mini-Project Demonstration Platform • Developed with Python, Scikit-Learn &amp; Flask.</p>
+  </footer>
+
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

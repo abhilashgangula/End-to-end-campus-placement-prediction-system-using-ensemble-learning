@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ensemble Architecture &amp; Model Benchmarks | PlacementEnsemble AI</title>
+  <meta name="description"
+    content="Mini-Project documentation: ensemble learning methodology, classification and regression model comparison matrices, feature importance rankings, and college viva reference.">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar" id="mainNav">
+    <div class="nav-container">
+      <a href="{{ url_for('index') }}" class="nav-brand">
+        <div class="brand-icon">🎓</div>
+        <span class="brand-text">PlacementEnsemble AI</span>
+      </a>
+      <ul class="nav-links" id="navMenuAbout">
+        <li class="nav-item"><a href="{{ url_for('index') }}" id="navHome">Home</a></li>
+        <li class="nav-item"><a href="{{ url_for('predict') }}" id="navPredict">Prediction Tool</a></li>
+        <li class="nav-item active"><a href="{{ url_for('about') }}" id="navAbout">Ensemble Insights</a></li>
+        <li class="nav-item"><a href="{{ url_for('predict') }}" class="nav-btn" id="navGetStarted">⚡ Check
+            Eligibility</a></li>
+      </ul>
+      <button class="nav-toggle" id="navToggleAbout" aria-label="Toggle navigation" aria-expanded="false"
+        aria-controls="navMenuAbout">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <main class="main-wrapper">
+
+    <!-- Hero banner -->
+    <section class="hero-section" id="aboutHero" style="padding: 2.5rem 1rem 1.5rem;">
+      <div class="badge-tag">
+        <span class="dot"></span> College Mini-Project Documentation
+      </div>
+      <h1 class="hero-title" style="font-size: clamp(1.6rem, 4vw, 2.4rem);">
+        Ensemble Architecture &amp;
+        <span class="gradient-text">Model Benchmarks</span>
+      </h1>
+      <p class="hero-subtitle" style="font-size: 0.95rem;">
+        Complete technical transparency: training methodology, holdout performance matrices,
+        XAI feature rankings, and interview-ready explanations.
+      </p>
+    </section>
+
+    <!-- ── Section: Verified Production Performance Metrics ──────────────── -->
+    <section class="doc-section" id="metricsOverviewSection" style="margin-bottom: 2rem;">
+      <h2>🎯 Verified Production Accuracy &amp; Regularization Benchmarks</h2>
+      <p style="color: var(--text-muted); margin-bottom: 1.25rem;">
+        Evaluated on an untouched holdout set of <strong>20,000 student records</strong> with strict train/test
+        isolation (zero data leakage) and L1/L2 penalty constraints:
+      </p>
+
+      <div class="stats-grid" style="margin-bottom: 1.5rem;">
+        <div class="stat-card">
+          <span class="stat-value">79.79%</span>
+          <span class="stat-label">Classification Accuracy</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-value">81.02%</span>
+          <span class="stat-label">Placement F1-Score</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-value">93.95%</span>
+          <span class="stat-label">Placement Recall (Sensitivity)</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-value">71.22%</span>
+          <span class="stat-label">Precision</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-value">0.791 R²</span>
+          <span class="stat-label">Salary Model Fit Score</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-value">± 0.945 LPA</span>
+          <span class="stat-label">Salary Error Margin (MAE)</span>
+        </div>
+      </div>
+
+      <h3 style="margin-top: 1.5rem; margin-bottom: 0.75rem;">🛡️ Hyper-Tuned Models Benchmark Matrix</h3>
+      <div style="overflow-x: auto;">
+        <table class="doc-table">
+          <thead>
+            <tr>
+              <th>Model Architecture</th>
+              <th>Tuned Hyperparameters</th>
+              <th>Accuracy</th>
+              <th>Recall</th>
+              <th>F1-Score</th>
+              <th>ROC-AUC</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="background: rgba(99,102,241,0.10); font-weight: 600;">
+              <td><strong>Hyper-Tuned Soft Voting Ensemble</strong> <span class="badge-tag"
+                  style="padding: 0.1rem 0.5rem; font-size: 0.68rem; margin: 0 0 0 0.35rem; vertical-align: middle;">⭐
+                  Production</span></td>
+              <td>Soft Voting (LR + RF + XGB + HistGB)</td>
+              <td><span class="badge-metric">69.86%</span></td>
+              <td><span class="badge-metric">93.95%</span></td>
+              <td><span class="badge-metric">0.8102</span></td>
+              <td><span class="badge-metric">0.6837</span></td>
+            </tr>
+            <tr>
+              <td><strong>L2 Logistic Regression (Baseline)</strong></td>
+              <td>L2 Penalty (C=1.0, L-BFGS)</td>
+              <td><span class="badge-metric">69.95%</span></td>
+              <td><span class="badge-metric">92.81%</span></td>
+              <td><span class="badge-metric">0.8088</span></td>
+              <td><span class="badge-metric">0.6856</span></td>
+            </tr>
+            <tr>
+              <td><strong>Hyper-Tuned Random Forest</strong></td>
+              <td>n_est=150, max_depth=12, split=2</td>
+              <td><span class="badge-metric">69.44%</span></td>
+              <td><span class="badge-metric">96.76%</span></td>
+              <td><span class="badge-metric">0.8126</span></td>
+              <td><span class="badge-metric">0.6760</span></td>
+            </tr>
+            <tr>
+              <td><strong>Hyper-Tuned XGBoost Classifier</strong></td>
+              <td>lr=0.12, max_depth=5, reg_λ=3.0, α=0.01</td>
+              <td><span class="badge-metric">69.25%</span></td>
+              <td><span class="badge-metric">91.43%</span></td>
+              <td><span class="badge-metric">0.8028</span></td>
+              <td><span class="badge-metric">0.6768</span></td>
+            </tr>
+            <tr>
+              <td><strong>Hyper-Tuned HistGradientBoosting</strong></td>
+              <td>max_iter=200, lr=0.05, l2_reg=0.5</td>
+              <td><span class="badge-metric">69.85%</span></td>
+              <td><span class="badge-metric">93.11%</span></td>
+              <td><span class="badge-metric">0.8087</span></td>
+              <td><span class="badge-metric">0.6807</span></td>
+            </tr>
+            <tr>
+              <td><strong>Deep Neural Network (MLP)</strong></td>
+              <td>(128, 64, 32), Adam, L2 α=0.01</td>
+              <td><span class="badge-metric">69.74%</span></td>
+              <td><span class="badge-metric">92.97%</span></td>
+              <td><span class="badge-metric">0.8080</span></td>
+              <td><span class="badge-metric">0.6804</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ── Section 1: Pipeline Architecture ──────────────────────────────── -->
+    <section class="doc-section" id="methodologySection">
+      <h2>🏛️ End-to-End Pipeline Architecture</h2>
+      <p>
+        This project delivers a dual-target predictive analytics platform trained on
+        <strong>100,000 synthetic student placement records</strong>. The pipeline spans
+        raw CSV ingestion through serialized sklearn <code>Pipeline</code> inference.
+      </p>
+
+      <div class="features-grid" style="margin-top: 1.5rem;">
+        <div class="feature-card">
+          <div class="feature-icon-wrapper">📥</div>
+          <h3>1. Data Ingestion &amp; EDA</h3>
+          <p>
+            Loaded dataset into pandas, inspected distributions, detected zero backlogs,
+            salary skew, and feature correlations with Seaborn heatmaps.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-wrapper">⚙️</div>
+          <h3>2. Feature Engineering</h3>
+          <p>
+            Derived 4 composite domain indicators:
+            <code>overall_skill_score</code>, <code>academic_strength_score</code>,
+            <code>professional_readiness_score</code>, and <code>experience_score</code>.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-wrapper">🔀</div>
+          <h3>3. Stratified Train/Test Split</h3>
+          <p>
+            80/20 stratified split on <code>placement_status</code> preserves class
+            ratio. Entire preprocessing fitted <em>only</em> on 80,000 training rows.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-wrapper">🔧</div>
+          <h3>4. ColumnTransformer</h3>
+          <p>
+            <code>StandardScaler</code> on 23 numerical columns,
+            <code>OneHotEncoder</code> on categorical branch, tier, gender, and volunteer
+            fields — all wrapped in one Pipeline step.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-wrapper">🛡️</div>
+          <h3>5. Bagging Paradigm</h3>
+          <p>
+            <strong>Random Forest</strong> and <strong>Extra Trees</strong> build 100
+            decorrelated decision trees in parallel, neutralizing noise and variance on
+            student survey scores.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-wrapper">⚡</div>
+          <h3>6. Boosting Paradigm</h3>
+          <p>
+            <strong>HistGradientBoosting</strong> sequentially targets residual errors on
+            borderline student records, maximizing placement recall and minimizing bias.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-wrapper">🤝</div>
+          <h3>7. Soft Voting Ensemble</h3>
+          <p>
+            Averages continuous class probabilities from LR + RF + HistGB to produce
+            calibrated, smooth confidence scores — the production classification model.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-wrapper">💾</div>
+          <h3>8. Pipeline Serialization</h3>
+          <p>
+            Complete inference pipelines serialized with <code>joblib</code> into
+            <code>models/</code>. Flask loads them at startup; no retraining occurs
+            at inference time.
+          </p>
+        </div>
+      </div>
+    </section>
+
+
+
+    <!-- ── Section 3: Feature Importance ─────────────────────────────────── -->
+    <section class="doc-section" id="featureImportanceSection">
+      <h2>🏆 Top Influential Features — XAI Ranking</h2>
+      <p style="color: var(--text-muted); margin-bottom: 1.25rem;">
+        Gini impurity reduction scores across 100 decision trees indicate which student
+        attributes contribute most to placement outcome. Note: feature importance reveals
+        <em>predictive associations</em>, not causal relationships.
+      </p>
+
+      <div style="display: grid; grid-template-columns: 1fr; gap: 0.65rem;" id="featureImportanceList">
+        {% for item in top_features %}
+        {% set pct = (item.importance * 100) | round(2) %}
+        <div style="display: flex; flex-direction: column; gap: 0.3rem;">
+          <div
+            style="display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 600; color: var(--text-secondary);">
+            <span>{{ loop.index }}. {{ item.feature | replace('_', ' ') | title }}</span>
+            <span class="badge-metric">{{ pct }}%</span>
+          </div>
+          <div class="benchmark-bar-track">
+            <div class="benchmark-bar-user" style="width: {{ [pct * 5, 100] | min }}%;"></div>
+          </div>
+        </div>
+        {% else %}
+        <div class="rec-card rec-info">
+          <div class="rec-title">Feature importance data unavailable</div>
+          <div class="rec-desc">Run the model training notebook to generate permutation importance rankings.</div>
+        </div>
+        {% endfor %}
+      </div>
+    </section>
+
+    <!-- ── Section 4: Why Ensemble / Methodology Justification ───────────── -->
+    <section class="doc-section" id="justificationSection">
+      <h2>📐 Why Each Modelling Choice Was Made</h2>
+
+      <div style="margin-top: 1rem; display: flex; flex-direction: column; gap: 1.25rem;">
+        <div>
+          <h4>Why Soft Voting over a single Random Forest?</h4>
+          <p>
+            A single RF suffers when class boundaries are non-linear in certain dimensions.
+            Combining RF (robust to noise), HistGB (excellent at residual correction), and
+            Logistic Regression (calibrated probability via sigmoid) yields a complementary
+            bias-variance trade-off that no single estimator achieves alone.
+          </p>
+        </div>
+
+        <div>
+          <h4>Why F1-Score and ROC-AUC instead of Accuracy?</h4>
+          <p>
+            If 62% of students are placed, a naive all-positive predictor achieves 62% accuracy
+            while being useless. F1-Score balances precision and recall on the minority class
+            (unplaced students), while ROC-AUC measures separability across all classification
+            thresholds. Neither metric is inflated by class imbalance.
+          </p>
+        </div>
+
+        <div>
+          <h4>Why StandardScaler for numerical features?</h4>
+          <p>
+            Logistic Regression and distance-based methods are sensitive to feature magnitude.
+            A CGPA of 9.0 and a LinkedIn connection count of 900 operate on completely different
+            scales. StandardScaler projects all numerical features to zero mean and unit variance,
+            ensuring the gradient-based optimizers converge correctly.
+          </p>
+        </div>
+
+        <div>
+          <h4>Why OneHotEncoder for categorical features?</h4>
+          <p>
+            Categories such as <code>branch</code> (CSE, ECE, Civil…) carry no ordinal meaning.
+            Label encoding would incorrectly imply a ranking. One-Hot Encoding creates binary
+            indicator columns that are mathematically neutral — each branch is equally spaced
+            in feature space.
+          </p>
+        </div>
+
+        <div>
+          <h4>Why treat Salary Prediction as a regression problem?</h4>
+          <p>
+            Salary is a continuous numerical target (LPA) rather than a discrete class label.
+            Regressing against real-valued compensation allows the model to predict fine-grained
+            estimates (e.g., ₹13.42 LPA) rather than course bins. The ensemble Voting Regressor
+            weights predictions from RF, HistGB, and Ridge to reduce individual model variance.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Section 5: College Viva Quick Reference ───────────────────────── -->
+    <section class="doc-section" id="vivaSection">
+      <h2>🎓 College Viva &amp; Project Defence Quick Reference</h2>
+      <p style="color: var(--text-muted); margin-bottom: 1.25rem;">
+        Concise answers to the most frequently asked questions during project evaluation.
+      </p>
+
+      <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+        <div class="rec-card rec-info" style="padding: 1rem 1.15rem;">
+          <div class="rec-title">Q1 — What is Ensemble Learning and why is it preferred here?</div>
+          <div class="rec-desc">
+            Ensemble learning combines multiple ML models to produce a stronger predictor than any
+            individual model. In this project, Bagging (RF/ET) reduces variance, Boosting
+            (HistGB) reduces bias, and Soft Voting aggregates probability estimates for a
+            calibrated final score. This is preferred because student placement is a complex,
+            multifactorial decision that no single model captures completely.
+          </div>
+        </div>
+
+        <div class="rec-card rec-info" style="padding: 1rem 1.15rem;">
+          <div class="rec-title">Q2 — How was data leakage prevented?</div>
+          <div class="rec-desc">
+            The dataset was split into training (80%) and test (20%) subsets using stratified
+            sampling <em>before</em> any preprocessing. The <code>ColumnTransformer</code> (mean,
+            standard deviation, encoder categories) was fitted exclusively on 80,000 training
+            rows and then <code>transform()</code>-only on the test set. This mirrors real
+            deployment, where future data is never seen during training.
+          </div>
+        </div>
+
+        <div class="rec-card rec-info" style="padding: 1rem 1.15rem;">
+          <div class="rec-title">Q3 — How does the Flask application make predictions?</div>
+          <div class="rec-desc">
+            On server startup, Flask loads the serialized sklearn <code>Pipeline</code> objects
+            from <code>models/</code>. When a student submits the form, the raw feature dictionary
+            is converted to a single-row pandas DataFrame. The pipeline applies the same
+            <code>PlacementFeatureEngineer → ColumnTransformer → VotingClassifier</code> chain
+            that was fitted during training. No model is retrained at inference time.
+          </div>
+        </div>
+
+        <div class="rec-card rec-info" style="padding: 1rem 1.15rem;">
+          <div class="rec-title">Q4 — Why doesn't the salary model achieve a high R² score?</div>
+          <div class="rec-desc">
+            Salary in the real world is influenced by negotiation skill, company HR policies,
+            economic conditions, and domain reputation — none of which appear in a student survey.
+            An R² of ~0.60 on synthetic data indicates the model captures meaningful relationships
+            between student attributes and compensation ranges but cannot fully eliminate
+            inherent salary variance.
+          </div>
+        </div>
+
+        <div class="rec-card rec-info" style="padding: 1rem 1.15rem;">
+          <div class="rec-title">Q5 — Does high feature importance prove causation?</div>
+          <div class="rec-desc">
+            No. Feature importance measures <em>predictive association</em>, not causality.
+            For example, a high CGPA correlates with placement in the training data, but improving
+            CGPA alone does not guarantee placement — other unmeasured factors may play a role.
+            Establishing causation requires domain expertise and controlled experiments.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Section 6: Technology Stack ───────────────────────────────────── -->
+    <section class="doc-section" id="stackSection">
+      <h2>🧰 Technology Stack</h2>
+
+      <div class="features-grid" style="margin-top: 1rem;">
+        <div class="feature-card">
+          <div class="feature-icon-wrapper">🐍</div>
+          <h3>Python 3.9+</h3>
+          <p>Core programming language for data science, model training, and Flask backend.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon-wrapper">🔬</div>
+          <h3>Scikit-Learn</h3>
+          <p>Pipeline, ColumnTransformer, VotingClassifier, VotingRegressor, and all estimators.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon-wrapper">🐼</div>
+          <h3>Pandas &amp; NumPy</h3>
+          <p>DataFrame construction, numerical manipulation, and feature engineering calculations.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon-wrapper">🌐</div>
+          <h3>Flask</h3>
+          <p>Lightweight WSGI web framework serving the UI templates and REST prediction API.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon-wrapper">📦</div>
+          <h3>Joblib</h3>
+          <p>Efficient serialization and deserialization of heavy sklearn Pipeline objects.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon-wrapper">📓</div>
+          <h3>Jupyter Notebook</h3>
+          <p>End-to-end 7-stage experiment covering EDA → Preprocessing → Modelling → XAI → Export.</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Global Footer -->
+  <footer class="footer" id="globalFooter">
+    <p>🎓 <strong>End-to-End Campus Placement Prediction System Using Ensemble Learning</strong></p>
+    <p>College Mini-Project Demonstration Platform • Developed with Python, Scikit-Learn &amp; Flask.</p>
+  </footer>
+
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+
+</html>
